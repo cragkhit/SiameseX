@@ -11,27 +11,27 @@ Viewing this page in a browser will display the form. You can submit a greeting 
 
 == What you'll need
 
-:Java version 1.8
-:Elasticsearch version 2.2.0
+* Java version 1.8
+* Elasticsearch version 2.2.0
 
 
 [[initial]]
 == Run a web controller
 
-1. Clone the repo and open the project (SiameseX/webapp) in IntelliJ IDEA (tested) or Eclipse (not tested).
-2. Extract elasticsearch-2.2.0-small.zip.
-3. Open a new terminal, nativate to the extracted elasticsearch folder, and run elasticsearch.
+1) Clone the repo and open the project (SiameseX/webapp) in IntelliJ IDEA (tested) or Eclipse (not tested).
+2) Extract elasticsearch-2.2.0-small.zip.
+3) Open a new terminal, nativate to the extracted elasticsearch folder, and run elasticsearch.
 
 ```bash
 ./bin/elasticsearch
 ```
 
-4. Inside IntelliJ IDEA, go to terminal and run
+4) Inside IntelliJ IDEA, go to terminal and run
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
-5. Wait until the compilation is completed, then open a web browser and go to: [http://localhost:8080/greeting](http://localhost:8080/greeting)
-6. Try to enter a code snippet in the search form and press search.
+5) Wait until the compilation is completed, then open a web browser and go to: [http://localhost:8080/greeting](http://localhost:8080/greeting)
+6) Try to enter a code snippet in the search form and press search.
 
