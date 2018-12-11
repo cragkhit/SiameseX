@@ -6,7 +6,7 @@ In this guide, you will build a web form of Siamese which will be accessible at 
 
     http://localhost:8080/greeting
 
-Viewing this page in a browser will display the form. You can submit a greeting by populating the `id` and `content` form fields. A results page will be displayed when the form is submitted.
+Viewing this page in a browser will display the form. You can submit a search query by putting a code snippet to search for clones in the form. A results page will be displayed when the form is submitted.
 
 
 == What you'll need
