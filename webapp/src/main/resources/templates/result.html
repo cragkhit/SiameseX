@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Siamse: Search Results</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<h1><img width="50px" src="https://github.com/cragkhit/cragkhit.github.io/blob/master/images/siamse_logo.png?raw=true" />Siamese</h1>
+<h2>Clone Search Results</h2>
+<hr />
+<!--<p th:text="'id: ' + ${greeting.id}" /-->
+<div>
+    <p th:utext="${greeting.content}"></p>
+</div>
+<hr />
+<a href="/greeting">Submit another query</a>
+</body>
+</html>
