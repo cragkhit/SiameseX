@@ -12,14 +12,16 @@ Viewing this page in a browser will display the form. You can submit a greeting 
 == What you'll need
 
 * Java version 1.8
-* Elasticsearch version 2.2.0
+* Elasticsearch version 2.2.0 (already provided in this repo)
 
 
 [[initial]]
 == Run a web controller
 
 1) Clone the repo and open the project (SiameseX/webapp) in IntelliJ IDEA (tested) or Eclipse (not tested).
+
 2) Extract elasticsearch-2.2.0-small.zip.
+
 3) Open a new terminal, nativate to the extracted elasticsearch folder, and run elasticsearch.
 
 ```bash
