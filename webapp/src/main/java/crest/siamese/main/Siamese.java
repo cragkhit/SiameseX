@@ -9,12 +9,8 @@ import crest.siamese.document.Document;
 import crest.siamese.document.Method;
 import crest.siamese.settings.IndexSettings;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
-import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.commons.io.filefilter.NameFileFilter;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.lucene.index.*;
-import org.apache.lucene.search.similarities.ClassicSimilarity;
 import org.elasticsearch.client.Client;
 
 import org.apache.commons.io.FileUtils;
@@ -91,9 +87,9 @@ public class Siamese {
     private String licenseExtractor;
     private String url = "none";
     private String fileLicense = "unknown";
-    private boolean github = false;
-    private boolean computeSimilarity = false;
-    private int simThreshold = 0;
+    private boolean licenseFileDetection = false;
+    private String computeSimilarity = "none";
+    private String[] simThreshold = {"80%", "80%", "80%", "80%"};
     private Tokenizer tokenizer;
     private Normalizer normalizer;
     private Tokenizer origTokenizer;
@@ -106,6 +102,8 @@ public class Siamese {
     private String deleteWildcard;
     private int deleteAmount;
     private boolean[] enableRep = {true, true, true, true};
+    private boolean github = false;
+    private boolean ignoreQueryClones = false;
     private IndexReader esIndexRader;
 
     public Siamese(String configFile) {
@@ -188,23 +186,18 @@ public class Siamese {
             this.origBoost = Integer.parseInt(prop.getProperty("origBoost"));
             this.t2Boost = Integer.parseInt(prop.getProperty("t2Boost"));
             this.t1Boost = Integer.parseInt(prop.getProperty("t1Boost"));
-
             // multi-representation
             this.multiRep = Boolean.parseBoolean(prop.getProperty("multirep"));
-
             // customization to support other languages
             this.methodParserName = prop.getProperty("methodParser");
             this.tokenizerName = prop.getProperty("tokenizer");
             this.normalizerName = prop.getProperty("normalizer");
-
             this.recreateIndexIfExists = Boolean.parseBoolean(prop.getProperty("recreateIndexIfExists"));
-
             String parseModeConfig = prop.getProperty("parseMode");
             if (parseModeConfig.equals("method"))
                 this.parseMode = Settings.MethodParserType.METHOD;
             else
                 this.parseMode = Settings.MethodParserType.FILE;
-
             this.printEvery = Integer.parseInt(prop.getProperty("printEvery"));
             this.cloneClusterFile = "resources/clone_clusters_" + this.parseMode + ".csv";
             String errMeasureConfig = prop.getProperty("errorMeasure");
@@ -212,40 +205,35 @@ public class Siamese {
                 errMeasure = Settings.ErrorMeasure.ARP;
             else
                 errMeasure = Settings.ErrorMeasure.MAP;
-
             deleteIndexAfterUse = Boolean.parseBoolean(prop.getProperty("deleteIndexAfterUse"));
-
             // TODO: do we need this?
             prefixToRemove = inputFolder;
             if (!prefixToRemove.endsWith("/"))
                 prefixToRemove += "/"; // append / at the end
-//            prefixToRemove = "";
-
             elasticsearchLoc = prop.getProperty("elasticsearchLoc");
             outputFormat = prop.getProperty("outputFormat");
             indexingMode = prop.getProperty("indexingMode");
             bulkSize = Integer.parseInt(prop.getProperty("bulkSize"));
-
             includeLicense = Boolean.parseBoolean(prop.getProperty("license"));
             licenseExtractor = prop.getProperty("licenseExtractor");
-
-            github = Boolean.parseBoolean(prop.getProperty("github"));
-
-            computeSimilarity = Boolean.parseBoolean(prop.getProperty("computeSimilarity"));
-            simThreshold = Integer.parseInt(prop.getProperty("simThreshold"));
-
+            licenseFileDetection = Boolean.parseBoolean(prop.getProperty("licenseFileDetection"));
+            computeSimilarity = prop.getProperty("computeSimilarity");
+            /* copied from
+            https://stackoverflow.com/questions/43338223/reading-a-int-from-java-properties-file
+             */
+            String simThresholds = prop.getProperty("simThreshold");
+            simThreshold = simThresholds.split(",");
             if (command.equals("delete")) {
                 deleteField = prop.getProperty("deleteField");
                 deleteWildcard = prop.getProperty("deleteWildcard");
                 deleteAmount = Integer.parseInt(prop.getProperty("deleteAmount"));
             }
-
             String[] enableRepStr = prop.getProperty("enableRep").split(",");
             for (int i=0; i<enableRepStr.length; i++) {
                 enableRep[i] = Boolean.valueOf(enableRepStr[i]);
             }
-//            System.out.println(Arrays.toString(enableRep));
-
+            github = Boolean.parseBoolean(prop.getProperty("github"));
+            ignoreQueryClones = Boolean.parseBoolean(prop.getProperty("ignoreQueryClones"));
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
@@ -265,17 +253,17 @@ public class Siamese {
         System.out.println("server         : " + server);
         System.out.println("index          : " + index);
         System.out.println("type           : " + type);
-        System.out.println("--------------- DATA ---------------");
+        System.out.println("---------- DATA --------------------");
         System.out.println("inputFolder    : " + inputFolder);
         System.out.println("outputFolder   : " + outputFolder);
         System.out.println("dfs            : " + isDFS);
         System.out.println("extension      : " + extension);
         System.out.println("minCloneSize   : " + minCloneLine);
-        System.out.println("------------- EXECUTION ------------");
+        System.out.println("---------- EXECUTION ---------------");
         System.out.println("command        : " + command);
         System.out.println("indexingMode   : " + indexingMode + " (" + bulkSize + ")");
         System.out.println("outputFormat   : " + outputFormat);
-        System.out.println("------- MULTI-REPRESENTATION -------");
+        System.out.println("---------- MULTI-REPRESENTATION ----");
         System.out.println("multiRep       : " + multiRep + " " +  Arrays.toString(enableRep));
         System.out.println("T2 norm        : dsvw");
         System.out.println("T3 norm        : " + normMode);
@@ -286,6 +274,10 @@ public class Siamese {
                 " t2=" + this.qrPercentileT2 + " t3=" + this.qrPercentileNorm);
         System.out.println("queryBoosts    : t0=" + origBoost + " t1=" + t1Boost +
                 " t2=" + t2Boost + " t3=" + normBoost);
+        System.out.println("---------- SIMILARITY --------------");
+        System.out.println("computeSimilarity : " + computeSimilarity);
+        System.out.println("simThreshold      : " + simThreshold[0] + "," + simThreshold[1] + ","
+                                                  + simThreshold[2] + "," + simThreshold[3]);
         System.out.println("====================================");
     }
 
@@ -338,8 +330,12 @@ public class Siamese {
         } else if (outputFormat.equals("csvfline")) {
             formatter.setFormat("csv");
             formatter.setAddStartEndLine(true);
+            if (this.includeLicense)
+                formatter.setAddLicense(true);
         } else if (outputFormat.equals("gcf")) {
             formatter.setFormat("gcf");
+        } else if (outputFormat.equals("json")) {
+            formatter.setFormat("json");
         } else {
             System.out.println("ERROR: wrong output format");
             return null;
@@ -399,9 +395,12 @@ public class Siamese {
         try {
             if (siameseClient != null) {
                 if (command.toLowerCase().equals("index")) {
-                    if (recreateIndexIfExists) {
-                        createIndex(indexSettings, mappingStr);
-                    }
+                    if (this.github) genGitHubInfo();
+                    /*
+                    Read the license from the license file at the root dir.
+                    Do this only once per input folder.
+                     */
+                    if (recreateIndexIfExists) createIndex(indexSettings, mappingStr);
                     long startingId = 0;
                     if (!recreateIndexIfExists && doesIndexExist()) {
                         startingId = getMaxId(index) + 1;
@@ -444,39 +443,6 @@ public class Siamese {
         }
 
         return outputFile;
-    }
-
-    public String queryWithString(String query) throws Exception {
-        // check if the client is already started up
-        if (siameseClient == null) {
-            startup();
-        }
-
-        // initialise the n-gram generator
-        ngen = new nGramGenerator(ngramSize);
-        t2Ngen = new nGramGenerator(t2NgramSize);
-        t1Ngen = new nGramGenerator(t1NgramSize);
-
-        try {
-            if (siameseClient != null) {
-                    if (es.doesIndexExist(this.index)) {
-                        OutputFormatter formatter = getOutputFormatter();
-                        // create the output folder if it doesn't exist.
-                        MyUtils.createDir(outputFolder);
-                        // reading the index for query reduction
-                        readESIndex(index);
-                        return searchWithString(query, resultOffset, resultsSize, queryReduction);
-                    } else {
-                        // index does not exist
-                        throw new Exception("index " + this.index + " does not exist.");
-                    }
-            } else {
-                System.out.println("ERROR: cannot create Elasticsearch client ... ");
-            }
-        }  catch (Exception e) {
-            throw e;
-        }
-        return "ERROR";
     }
 
     private long getMaxId(String index) throws Exception {
@@ -584,7 +550,11 @@ public class Siamese {
         // method counter
         long count = 0;
         int fileCount = 0;
-        System.out.println("Indexing Phase: found " + listOfFiles.size() + " files.");
+        System.out.println("Indexing Phase: found " + listOfFiles.size() + " source code files.");
+        // extract the license at project level
+        if (this.includeLicense) {
+            this.fileLicense = extractProjectLicense();
+        }
         for (File file : listOfFiles) {
             try {
                 String license = "none";
@@ -645,6 +615,7 @@ public class Siamese {
                                         method.getStartLine(),
                                         method.getEndLine(),
                                         normSource,
+//                                        "", "", "",
                                         t2Source,
                                         t1Source,
                                         tokenizedSource,
@@ -692,7 +663,7 @@ public class Siamese {
                     double percent = (double) fileCount * 100 / listOfFiles.size();
                     DecimalFormat df = new DecimalFormat("#.00");
                     System.out.println("Indexed " + fileCount
-                            + " [" + df.format(percent) + "%] documents (" + count + " methods).");
+                            + " [" + df.format(percent) + "%] documents/files (" + count + " methods).");
                 }
             } catch (Exception e) {
                 System.out.println("ERROR: error while indexing a file: " + file.getAbsolutePath() + ". Skip.");
@@ -712,7 +683,7 @@ public class Siamese {
             double percent = (double) fileCount * 100 / listOfFiles.size();
             DecimalFormat df = new DecimalFormat("#.00");
             System.out.println("Indexed " + fileCount
-                    + " [" + df.format(percent) + "%] documents (" + count + " methods).");
+                    + " [" + df.format(percent) + "%] files (" + count + " methods).");
         }
         // successfully indexed, return true
 //        System.out.println("Successfully indexed documents.");
@@ -733,8 +704,12 @@ public class Siamese {
         String outfilePath = outputFolder + "/" + index + "_" + qr + "_" + df.format(dateobj);
         if (formatter.getFormat().contains("csv"))
             outfilePath += ".csv";
-        else
+        else if (formatter.getFormat().equals("gcf"))
             outfilePath += ".xml";
+        else if (formatter.getFormat().equals("json"))
+            outfilePath += ".json";
+        else
+            outfilePath += ".csv"; // fall back to csv
         File outfile = new File(outfilePath);
         // if file doesn't exists, then create it
         boolean isCreated = false;
@@ -749,7 +724,7 @@ public class Siamese {
             extensions[0] = extension;
             File folder = new File(inputFolder);
             List<File> listOfFiles = (List<File>) FileUtils.listFiles(folder, extensions, true);
-            System.out.println("Querying Phase: found " + listOfFiles.size() + " files.");
+            System.out.println("Querying Phase: found " + listOfFiles.size() + " source code files.");
             long count = 0;
             long methodCount = 0;
             long search = 0;
@@ -781,7 +756,7 @@ public class Siamese {
                                 q.setFile(method.getFile() + "_" + method.getName());
                                 q.setStartline(method.getStartLine());
                                 q.setEndline(method.getEndLine());
-                                outToFile += formatter.format(q, prefixToRemove, license);
+                                String queryText = formatter.format(q, prefixToRemove, license);
 
                                 // t3Query size limit is enforced
                                 if (queryReduction) {
@@ -828,21 +803,30 @@ public class Siamese {
                                 // search for results depending on the MR setting
                                 if (this.multiRep) {
                                     results = es.search(index, type, origQuery, t3Query, t2Query, t1Query,
-                                            origBoost, normBoost, t2Boost, t1Boost, isPrint, isDFS, offset, size);
+                                            origBoost, normBoost, t2Boost, t1Boost, isPrint, isDFS, offset,
+                                            size, this.computeSimilarity, simThreshold);
 //                                    System.out.println("T3: " + t3Query);
 //                                    System.out.println("T2: " + t2Query);
 //                                    System.out.println("T1: " + t1Query);
 //                                    System.out.println("T0: " + origQuery);
                                 } else {
+                                    System.out.println("QUERY: " + methodCount + "\n" + origQuery);
+//                                    results = es.search(index, type, origQuery, isPrint, isDFS, offset, size);
                                     results = es.search(index, type, origQuery, isPrint, isDFS, offset, size);
-//                                    System.out.println("T0: " + origQuery);
                                 }
-
-                                if (this.computeSimilarity) {
-                                    int[] sim = computeSimilarity(origQuery, results);
-                                    outToFile += formatter.format(results, sim, this.simThreshold, prefixToRemove);
+                                // fuzzywuzzy similarity is applied after the search
+                                if (this.computeSimilarity.equals("fuzzywuzzy")) {
+//                                    int[] sim = computeSimilarityOneRep(origQuery, results);
+//                                    outToFile += formatter.format(results, sim, this.simThreshold, prefixToRemove);
+                                    // TODO: only for the thesis, put this back after the experiment.
+                                    int[][] sim = computeSimilarity(origQuery, t1Query, t2Query, t3Query, results);
+                                    outToFile += formatter.format(results, sim,
+                                            this.simThreshold,
+                                            prefixToRemove,
+                                            ignoreQueryClones, q, queryText);
                                 } else {
-                                    outToFile += formatter.format(results, prefixToRemove);
+                                    outToFile += formatter.format(results, prefixToRemove,
+                                            ignoreQueryClones, q, queryText);
                                 }
                                 search++;
                             } else {
@@ -862,10 +846,13 @@ public class Siamese {
                 if (count % printEvery == 0) {
                     double percent = (double) count * 100 / listOfFiles.size();
                     DecimalFormat percentFormat = new DecimalFormat("#.00");
-                    System.out.println("Searched " + search + "/" + count
-                            + " [" + percentFormat.format(percent) + "%] documents (" + methodCount + " methods).");
+                    System.out.println("Searched " + search + " code fragments ["
+                            + percentFormat.format(percent) + "%] (from " + count
+                            + " files/" + methodCount + " methods).");
                     if (formatter.getFormat().equals("gcf"))
                         outToFile = formatter.getXML();
+                    else if (formatter.getFormat().equals("json"))
+                        outToFile = formatter.getJSON();
                     bw.write(outToFile);
                     // reset the output to print
                     outToFile = "";
@@ -874,6 +861,8 @@ public class Siamese {
             // flush the last part of output
             if (formatter.getFormat().equals("gcf"))
                 outToFile = formatter.getXML();
+            else if (formatter.getFormat().equals("json"))
+                outToFile = formatter.getJSON();
             bw.write(outToFile);
             bw.close();
             System.out.println("Searching done for " + count + " files (" +
@@ -937,40 +926,106 @@ public class Siamese {
             if (enableRep[0])
                 origQuery = tokenize(query, origTokenizer, false, ngen);
         }
+
         // search for results depending on the MR setting
         if (this.multiRep) {
             results = es.search(index, type, origQuery, t3Query, t2Query, t1Query,
-                    origBoost, normBoost, t2Boost, t1Boost, isPrint, isDFS, offset, size);
+                    origBoost, normBoost, t2Boost, t1Boost, isPrint, isDFS, offset,
+                    size, this.computeSimilarity, simThreshold);
         } else {
             results = es.search(index, type, origQuery, isPrint, isDFS, offset, size);
         }
 
         String output = "";
-        output += "<ol>";
-        for (Document r: results) {
-            String[] fileName = r.getFile().split(".java_");
-            output += "<li><b>File:</b>&nbsp;" + fileName[0] + ".java&nbsp;" +
-                    "<b>Method:</b>&nbsp;" +
-                    fileName[1] + "&nbsp;<b>Line:</b>&nbsp;" +
-                    r.getStartLine() + "&nbsp;to&nbsp;" + r.getEndLine() + "</li>";
-        }
-        output += "</ol>";
+        /* put query at the front */
+        JSONFormatter jsonFormatter = new JSONFormatter();
+        jsonFormatter.addCloneClass(1, -1, results);
+        output = jsonFormatter.getJSONString();
 
-        return "<h4>Found: " + String.valueOf(results.size()) + " results.</h4>" + output;
+//        output += "<ol>";
+//        for (Document r: results) {
+//            String[] fileName = r.getFile().split(".java_");
+//            output += "<li><b>File:</b>&nbsp;" + fileName[0] + ".java&nbsp;" +
+//                    "<b>Method:</b>&nbsp;" +
+//                    fileName[1] + "&nbsp;<b>Line:</b>&nbsp;" +
+//                    r.getStartLine() + "&nbsp;to&nbsp;" + r.getEndLine() + "</li>";
+//        }
+//        output += "</ol>";
+
+        return output;
+    }
+
+    public String queryWithString(String query) throws Exception {
+        // check if the client is already started up
+        if (siameseClient == null) {
+            startup();
+        }
+
+        // initialise the n-gram generator
+        ngen = new nGramGenerator(ngramSize);
+        t2Ngen = new nGramGenerator(t2NgramSize);
+        t1Ngen = new nGramGenerator(t1NgramSize);
+
+        try {
+            if (siameseClient != null) {
+                if (es.doesIndexExist(this.index)) {
+                    OutputFormatter formatter = getOutputFormatter();
+                    // create the output folder if it doesn't exist.
+                    MyUtils.createDir(outputFolder);
+                    // reading the index for query reduction
+                    readESIndex(index);
+                    return searchWithString(query, resultOffset, resultsSize, queryReduction);
+                } else {
+                    // index does not exist
+                    throw new Exception("index " + this.index + " does not exist.");
+                }
+            } else {
+                System.out.println("ERROR: cannot create Elasticsearch client ... ");
+            }
+        }  catch (Exception e) {
+            throw e;
+        }
+        return "ERROR";
     }
 
     /**
      * Compute similarity between query and results using fuzzywuzzy string matching
-     * @param query the code query
-     * @param results the list of results
-     * @return an array of similarity values
+     * @param query the f0 code query (original)
+     * @return a 2D array of similarity values
      */
-    private int[] computeSimilarity(String query, ArrayList<Document> results) {
-        int[] simResults = new int[results.size()];
+    private int[] computeSimilarityOneRep(String query, ArrayList<Document> results) {
+        int[] simResults = new int[results.size()]; // 2D sim array of four representations
         for (int i=0; i<results.size(); i++) {
             Document d = results.get(i);
-            int sim = FuzzySearch.tokenSetRatio(query, d.getOriginalSource());
-            simResults[i] = sim;
+            int sim0 = FuzzySearch.tokenSetRatio(query, d.getTokenizedSource());
+            // compute an average similarity of the four representations
+            simResults[i]=sim0;
+        }
+        return simResults;
+    }
+
+    /**
+     * Compute similarity between query and results using fuzzywuzzy string matching
+     * @param query the f0 code query (original)
+     * @param t1Query the f1 code query
+     * @param t2Query the f2 code query
+     * @param t3Query the f3 code query
+     * @param results the list of results
+     * @return a 2D array of similarity values
+     */
+    private int[][] computeSimilarity(String query,
+                                    String t1Query, String t2Query, String t3Query,
+                                    ArrayList<Document> results) {
+        int[][] simResults = new int[results.size()][4]; // 2D sim array of four representations
+        for (int i=0; i<results.size(); i++) {
+            Document d = results.get(i);
+            int sim0 = FuzzySearch.tokenSetRatio(query, d.getTokenizedSource());
+            int sim1 = FuzzySearch.tokenSetRatio(t1Query, d.getT1Source());
+            int sim2 = FuzzySearch.tokenSetRatio(t2Query, d.getT2Source());
+            int sim3 = FuzzySearch.tokenSetRatio(t3Query, d.getSource());
+            // compute an average similarity of the four representations
+            int[] sims = { sim0, sim1, sim2, sim3 };
+            simResults[i] = sims;
         }
         return simResults;
     }
@@ -1216,6 +1271,80 @@ public class Siamese {
         return normalizer;
     }
 
+    public String extractProjectLicense() {
+        File f = new File(this.inputFolder + "/LICENSE.txt");
+        if (!f.exists() || f.isDirectory()) {
+            f = new File(this.inputFolder + "/LICENSE");
+        } else if (!f.exists() || f.isDirectory()) {
+            f = new File(this.inputFolder + "/LICENSE.md");
+        } else if (!f.exists() || f.isDirectory()) {
+            f = new File(this.inputFolder + "/license.txt");
+        } else if (!f.exists() || f.isDirectory()) {
+            f = new File(this.inputFolder + "/COPYING");
+        } else if (!f.exists() || f.isDirectory()) {
+            f = new File(this.inputFolder + "/COPYING.LESSER");
+        }
+
+        String license = "none";
+        String licenseStr = "";
+        try {
+            if (f.exists() && !f.isDirectory()) {
+                String[] lines = FileUtils.readFileToString(f).split("\n");
+                // concat the license string into one single line
+                for (String line : lines) {
+                    licenseStr += line + " ";
+                }
+                licenseStr = licenseStr.trim().replaceAll("\\s+", " ");
+                license = LicenseExtractor.extractLicenseWithRegExp(licenseStr);
+
+                if (!license.equals("unknown")) {
+                    this.fileLicense = license;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("ERROR: cannot read the license file.");
+        }
+        return license;
+    }
+
+    private void genGitHubInfo() {
+        String[] inputPath = this.inputFolder.split("/");
+        String projName = inputPath[inputPath.length-2] + "/" + inputPath[inputPath.length-1];
+        this.url = "https://github.com/" + projName + "/blob/master";
+    }
+
+    public void setIsPrint(boolean isPrint) {
+        this.isPrint = isPrint;
+    }
+
+    public void setOutputFolder(String outputFolder) {
+        this.outputFolder = outputFolder;
+    }
+
+    public void setNormMode(String normMode) {
+        this.normMode = normMode;
+    }
+
+    public void setResultOffset(int resultOffset) {
+        this.resultOffset = resultOffset;
+    }
+
+    public void setResultsSize(int resultsSize) {
+        this.resultsSize = resultsSize;
+    }
+
+    public String getComputeSimilarity() {
+        return this.computeSimilarity;
+    }
+
+    public void setInputFolder(String inputFolder) {
+        this.inputFolder = inputFolder;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
     public void indexGitHub() throws Exception {
         if (this.inputFolder.endsWith("/"))
             this.inputFolder = StringUtils.chop(this.inputFolder);
@@ -1272,41 +1401,5 @@ public class Siamese {
         } catch (Exception e) {
             throw e;
         }
-    }
-
-    public void setIsPrint(boolean isPrint) {
-        this.isPrint = isPrint;
-    }
-
-    public void setOutputFolder(String outputFolder) {
-        this.outputFolder = outputFolder;
-    }
-
-    public void setNormMode(String normMode) {
-        this.normMode = normMode;
-    }
-
-    public void setResultOffset(int resultOffset) {
-        this.resultOffset = resultOffset;
-    }
-
-    public void setResultsSize(int resultsSize) {
-        this.resultsSize = resultsSize;
-    }
-
-    public boolean getComputeSimilarity() {
-        return this.computeSimilarity;
-    }
-
-    public void setInputFolder(String inputFolder) {
-        this.inputFolder = inputFolder;
-    }
-
-    public void setCommand(String command) {
-        this.command = command;
-    }
-
-    public String getTestString() {
-        return "I am Siamese.";
     }
 }
