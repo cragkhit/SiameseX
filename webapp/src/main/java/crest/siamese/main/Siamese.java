@@ -619,8 +619,8 @@ public class Siamese {
                                         t2Source,
                                         t1Source,
                                         tokenizedSource,
-//                                        method.getSrc(),
-                                        "", // TODO: insert empty original code for performance now.
+                                        method.getSrc(),
+//                                        "", // TODO: insert empty original code for performance now.
                                         license,
                                         finalUrl);
                                 // add document to array

@@ -16,6 +16,7 @@ crest/siamese/helpers/BCBEvaluator.class
 crest/siamese/document/MethodClone.class
 crest/siamese/helpers/Tokenizer.class
 hello/GreetingController.class
+crest/siamese/helpers/JSONFormatter.class
 crest/siamese/settings/Settings.class
 crest/siamese/test/DocumentTest.class
 crest/siamese/helpers/nGramGenerator.class
@@ -64,6 +65,7 @@ crest/siamese/helpers/JavaMethodParser$ConstructorVisitor.class
 crest/siamese/settings/Settings$RankingFunction.class
 crest/siamese/settings/IndexSettings$TFIDF$DisCountOverlap.class
 crest/siamese/helpers/ESConnector.class
+crest/siamese/test/LicenseExtractorTest.class
 crest/siamese/helpers/MethodLevelEvaluator.class
 crest/siamese/settings/IndexSettings$LMJ.class
 crest/siamese/settings/CustomSettings.class
