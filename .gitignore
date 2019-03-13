@@ -1,1 +1,5 @@
 elasticsearch-2.2.0-small
+**/.idea
+**/target
+/target/**
+*.log
