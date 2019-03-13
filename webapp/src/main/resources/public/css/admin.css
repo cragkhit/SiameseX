@@ -1,0 +1,14 @@
+body
+{
+    background:#f8f8ff; /*Ghost White From http://www.tayloredmktg.com/rgb/ */
+}
+
+.admin-form
+{
+    background:#fff;
+    padding:1rem;
+    margin:auto;
+    width:100%;
+    max-width: 25rem; /*rem must not having a space between or wider 26.25rem*/
+
+}

@@ -1,0 +1,19 @@
+body
+{
+    background:#f8f8ff; /*Ghost White*/
+}
+
+.register-form
+{
+    background:#fff;
+    padding:1rem;
+    margin:auto;
+    width:100%;
+    max-width: 25rem; /*rem must not having a space between*/
+
+}
+
+.text-sm-font
+{
+    font-size:0.9rem;
+}
