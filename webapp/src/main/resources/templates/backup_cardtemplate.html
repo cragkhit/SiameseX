@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="debugResult bg-light">
+
+<textarea class="w-100" rows="13" id="debug-value">{
+"clones": [
+[{
+    "license": "none",
+    "file": "pisito.java",
+    "start": "1",
+    "end": "184"
+}, {
+    "license": "true",
+    "file": "/Users/Chaiyong/Documents/phd/2016/cloplag/soco_f/formatted/110/110.java",
+    "start": "1",
+    "end": "158"
+}]
+]
+}</textarea>
+<button class="btn btn-block btn-success" id="debug-btn">Test Parsing JSON Text</button>
+<button class="btn btn-block btn-primary" id="debug-create-btn">Test Create a card from javascript</button>
+
+
+
+    <!-- th:if="${search.result}"
+    <div class="card my-3 ">
+        <p>return result (JSONObj)</p>
+        <pre class ="line-numbers">
+            <code th:utext="${search.result}" class="language-json">
+            </code>
+        </pre>
+    </div>
+    -->
+
+    <div id="debug-target">
+        Any debug result should be here
+    </div>
+</div>
+
+<span>Example card accordion: src
+    <a href="https://getbootstrap.com/docs/4.0/components/collapse/">https://getbootstrap.com/docs/4.0/components/collapse/</a></span>
+<span>Line hilight on
+    <a href="https://prismjs.com/plugins/line-highlight/">https://prismjs.com/plugins/line-highlight/</a>
+
+        Known error as  line-numbers is not working well with data-line for line hilighting
+    </span>
+
+<div class="card my-3">
+    <div class="card-header white-bg" id="heading2">
+        <span class="badge">2.</span>
+        <button class="btn btn-link btn-no-text-decoration" data-toggle="collapse" data-target="#collapse2" aria-expanded="true" aria-controls="collapse2">
+            ./annoymous/superSample.java
+        </button>
+    </div>
+
+    <div class="card-wrapper collapse" id="collapse2" aria-labelledby="heading2">
+        <div class="card-body my-0 py-1  border-bottom bg-light ">
+            <div class="card-title my-0 text-right ">
+                <span class="badge badge-pill badge-secondary">Line 7-8</span>
+                <a class="badge badge-light" href="#" tooltip="link to it"><i class="fas fa-external-link-alt"></i> Link</a>
+            </div>
+        </div>
+        <pre data-line="2-3,7-8">
+            <code class="language-java line-numbers" id="debug">
+                public static void main(String args[])
+                {
+                    String pisito = "All new vios";
+                    StringBuilder sm = new StringBuilder();
+                    sm.addLine(pisito);
+                    System.out.println(sm.toString());
+                }
+
+                @Test
+                public void givenFileNameAsAbsolutePath_whenUsingClasspath_thenFileData() {
+                    String expectedData = "Hello World from fileTest.txt!!!";
+
+                    Class clazz = FileOperationsTest.class;
+                    InputStream inputStream = clazz.getResourceAsStream("/fileTest.txt");
+                    String data = readFromInputStream(inputStream);
+
+                    Assert.assertThat(data, containsString(expectedData));
+                }
+            </code>
+        </pre>
+    </div><!-- card-wrapper -->
+</div><!-- .card -->
+
+</body>
+</html>

@@ -38,3 +38,19 @@ Viewing this page in a browser will display the form. You can submit a search qu
 
 6) Try to enter a code snippet in the search form and press search.
 
+== MySQL
+Please create the table and user below
+
+```
+mysql> CREATE DATABASE siamese;
+mysql> create user 'admin'@'%' identified by 'password';
+mysql> grant all on siamese.* to 'admin'@'%';
+```
+
+== Troubleshooting
+
+* Console error while searching -> need to modify the location of elasticsearch in config.properties
+```
+# location of elasticsearch
+elasticsearchLoc=./../elasticsearch-2.2.0-small
+```

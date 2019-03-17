@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Code Mirror Example pages</title>
+  <!-- bootstrap css cdn -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  
+  <!-- code mirror stylesheet -->
+  <link rel="stylesheet" href="lib/codemirror.css">
+  <!-- code mirror - code editor style must be loaded from /theme/ stylesheet -->
+  <!-- these sets are neat and clean for code preview selected by yours truely---->
+  <link rel="stylesheet" href="theme/dracula.css">
+  <link rel="stylesheet" href="theme/darcula.css">
+  <link rel="stylesheet" href="theme/idea.css">
+  <link rel="stylesheet" href="theme/neat.css">
+  <link rel="stylesheet" href="theme/seti.css">
+  <link rel="stylesheet" href="theme/yeti.css">
+  <link rel="stylesheet" href="theme/neo.css"> <!-- Very light clean neat style-->
+  <link rel="stylesheet" href="theme/monokai.css"> <!-- Very dark but colorful style -->
+  <link rel="stylesheet" href="theme/panda-syntax.css">
+  
+  <style type="text/css" media="screen">
+    body {
+        
+    }
+	.wrapper{
+		min-width:24rem;
+	}
+	
+	/*Github swatch https://brandcolors.net/b/github */
+	
+	.bg-github-green {
+		background-color:#6cc644;
+	}
+	
+	.bg-github-darkergrey {
+		background-color:#f2f2f2;
+	}
+	
+	.text-github-green {
+		text-color:#6cc644;
+	}	
+  </style>
+</head>
+<body>
+<div class="container wrapper">
+	<h2 class="bg-light">Code Edior using CodeMirror</h2>
+    <p>Sources: <a href="https://codemirror.net/">https://codemirror.net/</a></p>
+	<form>
+	
+	<div class="form-group">
+		<label for="codequery1">Pase your code here:</label>
+			<textarea id="codequery1" class="form-control">import java.util.Scanner;
+import javax.swing.JOptionPane;
+
+public class javaCalculator 
+{
+
+    public static void main(String[] args) 
+    {
+        int num1;
+        int num2;
+        String operation;
+
+
+        Scanner input = new Scanner(System.in);
+
+        System.out.println("please enter the first number");
+        num1 = input.nextInt();
+
+        System.out.println("please enter the second number");
+        num2 = input.nextInt();
+
+        Scanner op = new Scanner(System.in);
+
+        System.out.println("Please enter operation");
+        operation = op.next();
+
+        if (operation == "+");
+        {
+            System.out.println("your answer is" + (num1 + num2));
+        }
+        if  (operation == "-");
+        {
+            System.out.println("your answer is" + (num1 - num2));
+        }
+
+        if (operation == "/");
+        {
+            System.out.println("your answer is" + (num1 / num2));
+        }
+        if (operation == "*")
+        {
+            System.out.println("your answer is" + (num1 * num2));
+        }
+
+
+    }
+}</textarea>
+		</form>
+	</div><!-- .form-group -->
+	<div id="e-div" class="bg-light">
+		our data is here
+	</div>
+</div><!-- .container .wrapper-->
+
+<!-- jquery, popper, bootstrap js -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+
+<!-- code mirror javascipts -->
+<script src="lib/codemirror.js"></script>
+<script src="mode/javascript/javascript.js"></script>
+<script src="addon/selection/active-line.js"></script>
+<script>
+	// Jquery document ready function
+	$(function(){
+		// Note Jquery selector is no DOM, to access DOM element access index [0] from the Jquery API Selector
+		// Instant editor
+		const myTextArea = $('#codequery1')[0];
+		var myCodeMirror = CodeMirror.fromTextArea(myTextArea, 
+			{
+				styleActiveLine: true,
+				lineNumbers: true,
+				theme: "neo",
+				lineWrapping:true
+			}
+		);
+		// readOnly : true or "nocursor" 
+		// Execute keyboard input command - file:///D:/Development/Webs/CodeMirror/codemirror-5.44.0/doc/manual.html#commands
+		//myCodeMirror.execCommand('selectAll');
+		
+		
+		// Line in variable start from 0, but shown in browser start from 1
+		// So line 1 to 2 will marked (exactly in display line 2 to 3)
+		myCodeMirror.markText({line:1, ch:0}, {line:10, ch:myCodeMirror.getLine(10).length}, {className:'bg-github-darkergrey'});
+		
+	});
+	
+</script>
+
+</body>
+</html>

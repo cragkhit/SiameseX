@@ -7,14 +7,15 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="gs-handling-form-submission" />
-        <module name="initial" />
-        <module name="webapp" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="gs-handling-form-submission" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="webapp" options="-parameters" />
+      <module name="gs-handling-form-submission" options="-parameters" />
     </option>
   </component>
 </project>

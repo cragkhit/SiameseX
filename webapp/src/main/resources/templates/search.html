@@ -1,0 +1,212 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Siamese: Search, Plagiarism Detection on Cloud Search Engine</title>
+    <!-- Metas -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Font Awesome JS https://fontawesome.com/ for logo and icon css class-->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+
+    <!-- Code Mirror : Code Editor CSS -->
+    <link rel="stylesheet" href="/lib/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="/lib/codemirror/theme/neo.css"> <!-- Very light clean neat style-->
+
+    <!-- Search Page's CSS -->
+    <link rel="stylesheet" href="/css/search.css" type="text/css">
+    <link rel="stylesheet" href="/css/boxshadow.css" type="text/css">
+</head>
+<body>
+    <!-- expand-sm will make navigation bar only display a dropdown list (acquire a whole line in small resolution
+    https://getbootstrap.com/docs/4.0/components/navbar/
+    -->
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark  border-bottom justify-content-between sticky-top">
+        <!-- Toggler will show in small screen resolution, in this case, it will be on the left while brand word on the right
+            data-target must be an id of collapsible area of navigation bar div or element
+        -->
+
+        <!-- Text and Icons -->
+        <a class="navbar-brand" href="#">
+            <img src="/images/logo.png" width="30" height="30" class="d-inline-block align-top rounded-circle" alt="">
+            SiameseX
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                data-target="#navbarToggler" aria-controls="navbarToggler"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarToggler">
+            <ul class="navbar-nav text-right ml-auto">
+                <li class="nav-item">
+                    <!-- Go to Search subpage -->
+                    <form th:action="@{/search}" method="get" class="form-inline">
+                        <input type="submit" value="Admin" class="btn btn-link btn-block nav-link disabled " />
+                    </form>
+                </li>
+                <li class="nav-item">
+                    <!-- Go to Search subpage -->
+                    <form th:action="@{/search}" method="get" class="form-inline">
+                        <input type="submit" value="Search" class="btn btn-link btn-block nav-link active" />
+                    </form>
+                </li>
+                <li class="nav-item">
+                    <!-- Go to Profile subpage -->
+                    <form th:action="@{/profile}" method="get" class="form-inline">
+                        <input type="submit" value="Profile" class="btn btn-link btn-block nav-link" />
+                    </form>
+                    <!-- <a class="nav-link" href="#">Profile</a> -->
+                </li>
+                <li class="nav-item">
+                    <!-- Go to Logout module -->
+                    <form th:action="@{/logout}" method="post" class="form-inline">
+                        <input type="submit" value="Sign Out" class="btn btn-link btn-block nav-link"/>
+                    </form>
+                    <!-- <a class="nav-link" href="#">Sign out</a> -->
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- search-form -->
+    <div class="search-form container mt-sm-1 mt-md-4 mt-lg-5 mb-2 border rounded">
+        <!-- Content here -->
+        <div class="pt-2 border-bottom">
+            <!-- Main logo
+            <img src="/images/logo.png" class="mb-4" alt="Siamese logo" width="72" height="72"> -->
+            <h1 class="h4 ">Plagiarism detection on the web cloud server</h1>
+            <p class="lead">One click for checking code duplications </p>
+        </div>
+        <div class="clearfix mt-2">
+            <!-- float-md-right is Float right on medium screens or wider -->
+            <!-- d-md-block is display:block when on medium screen or smaller -->
+            <input class="btn btn-sm btn-outline-secondary float-md-right d-md-block mr-md-2" type="reset" value="Reset" id="queryResetBtn1" />
+            <button class="btn btn-sm btn-outline-success float-md-right d-md-block mr-md-2" id="tryBtn1">Try</button>
+            <p class="text text-secondary pt-1 mb-1"> <i class="fas fa-angle-right"> </i> Please enter java code here </p>
+
+        </div>
+
+
+        <form action="#" th:action="@{/search}" th:object="${search}" method="post" id="query-form1" novalidate>
+            <div class="text-center my-3" >
+                <p id="validation-check" class="d-none">
+                    The code must not be empty
+                </p>
+            </div>
+
+            <textarea th:field="*{content}" id="search-query-editor1" class="w-100" rows="13" required></textarea>
+
+            <input class="btn btn-lg btn-primary btn-block mb-3" type="submit" value="Submit Query" />
+
+        </form>
+
+
+
+    </div><!-- .search-form -->
+
+    <!-- Footer -->
+    <footer class="page-footer font-small">
+
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3 text-muted" style="font-size: 0.7rem">
+            Copyright © Faculty of ICT, Mahidol University 2019
+        </div>
+
+    </footer>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <!-- Code Mirror : Code Editor javascript -->
+    <script src="/lib/codemirror/lib/codemirror.js"></script>
+    <script src="/lib/codemirror/mode/javascript/javascript.js"></script>
+    <script src="/lib/codemirror/addon/selection/active-line.js"></script>
+
+    <!-- Page's Javascript -->
+    <script>
+        // jquery document ready function
+        $(function(){
+
+            // Create Code Mirror Editor
+            // Note Jquery selector is no DOM, to access DOM element access index [0] from the Jquery API Selector
+            // Text-area id = search-query-editor1
+            const myTextArea = $('#search-query-editor1')[0];
+            let editor = CodeMirror.fromTextArea(myTextArea, { styleActiveLine: true, lineNumbers: true, theme: "neo", lineWrapping: true});
+
+            // readOnly : true or "nocursor"
+            // Execute keyboard input command - file:///D:/Development/Webs/CodeMirror/codemirror-5.44.0/doc/manual.html#commands
+            //myCodeMirror.execCommand('selectAll');
+
+            // Mark lines
+            // Line in variable start from 0, but shown in browser start from 1
+            // So line 1 to 2 will marked (exactly in display line 2 to 3)
+            // myCodeMirror.markText({line:1, ch:0}, {line:10, ch:myCodeMirror.getLine(10).length}, {className:'bg-github-darkergrey'});
+
+
+            // Reset form reset button
+            const resetForm = function setResetForm()
+            {
+                // Reset hidden textarea and also reset display in the code mirror editor
+                $("#query-form1").trigger("reset");
+                $("#validation-check").addClass("d-none");
+                editor.getDoc().setValue('');
+                editor.focus();
+            };
+            // Register function
+            $('#queryResetBtn1').on('click', resetForm);
+
+            // Get editor value into textarea by custom submit
+            const setQueryValue = function setQueryValueFromEditor(event)
+            {
+                // Prevent original behaviour
+                event.preventDefault();
+                event.stopPropagation();
+
+                const value = editor.getValue();
+                $('#search-query-editor1').text(value);
+                // Check whether original text area has been updated
+                // $('#search-query-editor1').css({"display":"block"});
+                // console.log(value);
+                if(value.length != 0) {
+                    // Unregister this function then trigger normal default submit action
+                    $("#query-form1").unbind("submit").submit();
+                }else{
+                    $("#validation-check").addClass("alert alert-danger");
+                    $("#validation-check").removeClass("d-none");
+                    $("#validation-check").focus();
+                }
+            };
+            // Register form submit button
+            $('#query-form1').on('submit', setQueryValue);
+
+            // Create a test input in editor
+            const tryHelloWorld = function setHelloWorldCode()
+            {
+                // src: https://introcs.cs.princeton.edu/java/11hello/HelloWorld.java.html
+                const helloWorldCode = "public class HelloWorld {\n" +
+                    "\n" +
+                    "    public static void main(String[] args) {\n" +
+                    "        // Prints \"Hello, World\" to the terminal window.\n" +
+                    "        System.out.println(\"Hello, World\");\n" +
+                    "    }\n" +
+                    "\n" +
+                    "}";
+                editor.getDoc().setValue(helloWorldCode);
+            };
+            // Register try button's onclick
+            $('#tryBtn1').on('click', tryHelloWorld);
+
+        });
+    </script>
+
+
+</body>
+</html>

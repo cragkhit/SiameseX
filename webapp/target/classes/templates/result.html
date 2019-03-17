@@ -1,18 +1,373 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Siamse: Search Results</title>
+    <title>Siamese: Search result</title>
+    <!-- Metas -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Font Awesome JS https://fontawesome.com/ for logo and icon css class-->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+
+    <!-- Search Page's CSS -->
+    <link rel="stylesheet" href="/css/search.css" type="text/css">
+    <link rel="stylesheet" href="/css/boxshadow.css" type="text/css">
+    <!-- Prism CSS  -->
+    <link rel="stylesheet" href="/css/prism.css" >
+    <!-- Page's style -->
+    <style>
+        pre{
+            margin-top:0px!important;
+        }
+
+        .white-bg{
+            background-color:rgb(255,255,255)!important;
+        }
+
+        .btn-no-text-decoration{
+            text-decoration: none!important;
+       }
+
+        .btn-wrap-text {
+            white-space: normal !important;
+            word-wrap: break-word !important;
+        }
+    </style>
+
+
 </head>
-<body>
-<h1><img width="50px" src="https://github.com/cragkhit/cragkhit.github.io/blob/master/images/siamse_logo.png?raw=true" />Siamese</h1>
-<h2>Clone Search Results</h2>
-<hr />
-<!--<p th:text="'id: ' + ${greeting.id}" /-->
-<div>
-    <p th:utext="${greeting.content}"></p>
-</div>
-<hr />
-<a href="/greeting">Submit another query</a>
+<body id="header-position1">
+
+<!-- expand-sm will make navigation bar only display a dropdown list (acquire a whole line in small resolution
+   https://getbootstrap.com/docs/4.0/components/navbar/
+   -->
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark  border-bottom justify-content-between sticky-top">
+    <!-- Toggler will show in small screen resolution, in this case, it will be on the left while brand word on the right
+        data-target must be an id of collapsible area of navigation bar div or element
+    -->
+
+    <!-- Text and Icons -->
+    <a class="navbar-brand" href="#">
+        <img src="/images/logo.png" width="30" height="30" class="d-inline-block align-top rounded-circle" alt="">
+        SiameseX
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarToggler" aria-controls="navbarToggler"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarToggler">
+        <ul class="navbar-nav text-right ml-auto">
+            <li class="nav-item">
+                <!-- Go to Search subpage -->
+                <form th:action="@{/search}" method="get" class="form-inline">
+                    <input type="submit" value="Admin" class="btn btn-link btn-block nav-link disabled " />
+                </form>
+            </li>
+            <li class="nav-item">
+                <!-- Go to Search subpage -->
+                <form th:action="@{/search}" method="get" class="form-inline">
+                    <input type="submit" value="Search" class="btn btn-link btn-block nav-link" />
+                </form>
+            </li>
+            <li class="nav-item">
+                <!-- Notify result subpage -->
+                <button class="btn btn-link btn-block nav-link active text-success" role="button">Result</button>
+            </li>
+            <li class="nav-item">
+                <!-- Go to Profile subpage -->
+                <form th:action="@{/profile}" method="get" class="form-inline">
+                    <input type="submit" value="Profile" class="btn btn-link btn-block nav-link" />
+                </form>
+                <!-- <a class="nav-link" href="#">Profile</a> -->
+            </li>
+            <li class="nav-item">
+                <!-- Go to Logout module -->
+                <form th:action="@{/logout}" method="post" class="form-inline">
+                    <input type="submit" value="Sign Out" class="btn btn-link btn-block nav-link"/>
+                </form>
+                <!-- <a class="nav-link" href="#">Sign out</a> -->
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- search-form -->
+<div class="result-form container mt-sm-1 mt-md-4 mt-lg-5 mb-2 border rounded" >
+    <div class="row mt-2 mb-2">
+        <h3 class="col-sm-8" >Clone Search Results</h3>
+        <div class="col-sm-4 text-right">
+            <!-- visible only on small viewport and so on -->
+            <a class="btn d-none d-sm-inline-block" href="/search" style="text-decoration: none!important">Back</a>
+        </div>
+        <!-- visible only on xs - smaller than small (sm) viewport -->
+        <a class="btn btn-block btn-sm btn-light d-block d-sm-none" href="/search" style="text-decoration: none!important">Back</a>
+    </div>
+
+    <p th:if="${search.result}" class="lead border-bottom pb-1">
+        Founds: <span class="badge badge-secondary" id="result-size"> results</span>
+        <button id="expand-toggle-btn" class="btn btn-link btn-sm btn-no-text-decoration">Expand</button>
+        <button id="collapse-toggle-btn" class="btn btn-link text-danger btn-sm  btn-no-text-decoration">Collapse</button>
+    </p>
+    <p th:unless="${search.result}" class="lead border-bottom pb-1">No result found</p>
+    <!--<p th:text="'id: ' + ${search.id}" /-->
+
+
+    <div id="wrapper-result" class="bg-light">
+    </div>
+
+
+    <a class="btn btn-primary btn-block mb-3" href="/search" style="text-decoration: none!important">Create new search</a>
+</div><!-- .result-form -->
+
+<!-- Footer -->
+<footer class="page-footer font-small">
+
+    <!-- Copyright -->
+    <div class="footer-copyright text-center py-3 text-muted" style="font-size: 0.7rem">
+        Copyright © Faculty of ICT, Mahidol University 2019
+    </div>
+
+</footer>
+
+<div class="fix-buttom"><a class="btn btn-light btn-lg" href="#header-position1"> <i class="fas fa-angle-up"></i> </a></div>
+
+<script src="https://prismjs.com/scripts/prefixfree.min.js"></script>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<!-- Prism Javascript -->
+<!-- White space is removed using embedded https://prismjs.com/plugins/normalize-whitespace/ -->
+<script src="/js/prism.js" ></script>
+
+<!-- Thymeleaf return search.result , add comment for CDATA block always-->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const resultJSON = /*[[${search.result}]]*/ 'default';
+    /*]]>*/
+</script>
+
+<!-- Page's Javascript -->
+<script type="text/javascript">
+    // jquery document ready function
+    $(function(){
+
+        // .fix-bottom button behaviour for to-top navigation will show up if the page has been scrolled down more than yDistancePixelThreshold pixels
+        const yDistancePixelThreshold = 800;
+        $(document).scroll(function() {
+            var y = $(this).scrollTop();
+            if (y > yDistancePixelThreshold) {
+                $('.bottomMenu').removeClass("d-none");
+            } else {
+                $('.bottomMenu').addClass("d-none");
+            }
+        });
+
+
+        // Bind button's function: Expand all code elements
+        $('#expand-toggle-btn').on('click', function(){
+            $('.card-wrapper.collapse').addClass("show" );   // Intersection for element with both classes
+        });
+        // Bind Function: Collapse all code elements
+        $('#collapse-toggle-btn').on('click', function(){
+            $('.card-wrapper.collapse').removeClass("show" );   // Intersection for element with both classes
+        });
+
+
+        /* Utilities for Result Card display*/
+        const createCodeCard = function setSingleCardData(parentElementSelector, item, index){
+            /*
+            * parentElement can be either class name or id of the html, use as jquery selector
+            * Expected for each { } obj in code array
+            * item = {
+            *    license: string
+            *    file: string
+            *    href: string
+            *    start: string
+            *    end: string
+            *    code: string
+            * }
+            * */
+            const parent = $(parentElementSelector);
+
+            // Factory for card generation
+            const card = $("<div></div>", {
+                "class": "card my-0" // you need to quote "class" since it's a reserved keyword
+            });
+
+            const cardHeader = $("<div></div>", {
+                id: "heading" + index,
+                "class": "card-header white-bg"
+            });
+            const cardHeaderBadge = $("<span></span>", {
+                "class": "badge"
+            }).html(index +".");
+
+            const cardHeaderFilenameBtn = $("<a></a>", {
+                "class": "text-primary btn btn-no-text-decoration btn-wrap-text btn-sm d-block d-sm-inline-block",
+                "data-toggle": "collapse",
+                "data-target": "#collapse" + index,
+                "aria-expanded": "true",
+                "aria-controls": "collapse"+index
+            }).html(item.file);
+
+            // add .show to class list for the card to uncollapsed, viceversa remove it
+            const cardWrapper = $("<div></div>", {
+                id:"collapse" + index,
+                "class": "card-wrapper collapse",
+                "aria-labelledby": "heading" + index
+            });
+
+            const cardBody = $("<div></div>", {
+                "class": "card-body my-0 px-1 py-0 border-bottom bg-light"
+            });
+
+            const cardTitle = $("<div></div>", {
+                "class": "card-title my-0 text-right"
+            });
+
+            const cardTitleLicenseSpan = $("<span></span>", {
+                "class": "badge badge-pill badge-warning"
+            }).html("license:" + item.license);
+
+            // card title's span - showing lines' start and ended
+            const startLine = typeof item.start != "undefined" ? item.start : "1";
+            const endLine = typeof item.end != "undefined" ? item.end : "1";
+
+            const cardTitleLineSpan = $("<span></span>", {
+                "class": "badge badge-pill badge-secondary"
+            }).html("Line " + (startLine) + " : " + (endLine));
+
+            // card title's <a>
+            const cardTitleLink = $("<a></a>", {
+                href: typeof item.href != "undefined" ? item.href : "#",
+                "class": "badge badge-light",
+            }).html('<i class="fas fa-external-link-alt"></i> Link');
+
+            // Code display
+            const pre = $("<pre></pre>", {
+                "data-line":startLine + "-" + endLine // i.e dataline="2-3"
+                // Overexceed data-line range will produce wrong highlight
+                //"data-line":1 + "-" + 3 // i.e dataline="2-3"
+            });
+
+            const languageMode = "language-java"; // Prism css class components to markup language
+            const lineNumberMode = "line-numbers"; // Prism add-on to display line numbers - not work well with line hilight so pick one
+
+            const defaultCodeData = "public class HelloWorld {\n" +
+                "\n" +
+                "//  Default Code sample" +
+                "    public static void main(String[] args) {\n" +
+                "        // Prints \"Hello, World\" to the terminal window.\n" +
+                "        System.out.println(\"Hello, World\");\n" +
+                "    }\n" +
+                "\n" +
+                "}";
+
+            const codeData = typeof item.code != "undefined"? item.code : defaultCodeData
+
+            const code = $("<code></code>", {
+                id:"code-section" + index,
+                "class": languageMode
+            }).html(codeData);
+
+
+            // Card header
+            // header - { span, button }
+            cardHeader.append(cardHeaderBadge).append(cardHeaderFilenameBtn);
+
+            // Card title
+            cardTitle.append(cardTitleLicenseSpan).append(cardTitleLineSpan).append(cardTitleLink);
+
+            // Pre-Code
+            pre.append(code);
+
+            // Card body
+            cardBody.append(cardTitle).append(pre);
+
+            // Card wrapper
+            cardWrapper.append(cardBody)
+
+            // Put it together
+            // card
+            //   + card-header
+            //   ++  span
+            //   ++  a-header
+            //   + card-wrapper
+            //   ++  card-body
+            //   +++    card-title
+            //   ++++      license-span
+            //   ++++      line-span
+            //   ++++      a
+            //   +++    pre
+            //   ++++      code
+            card.append(cardHeader).append(cardWrapper);
+
+            // Put it to parent container
+            parent.append(card);
+
+            // Update code element to be processed by PrismJs
+            // Use plain javascript
+            const blockCode = document.getElementById("code-section" + index);
+            Prism.highlightElement(blockCode);
+
+            // Finish 1 code as card display
+
+        };
+
+        // Generated card from JSON input
+        if(typeof resultJSON != "undefined")
+        {
+            //console.log("has response json object");
+            //let resultObj = JSON.parse(resultJSON);
+            //console.log(resultJSON);
+
+
+            if(typeof resultJSON.clones == "undefined")
+            {
+                //console.log("Has no result in response data");
+                $('#result-size').html("0 founds")
+            }
+            else
+            {
+                //console.log("Has " + resultJSON.clones[0].length + " founds");
+
+                $('#result-size').html(resultJSON.clones[0].length + " founds");
+                // TODO: fix siamese java app to not double square bracket then fix the code access here clone
+                const dataList = resultJSON.clones[0];
+                dataList.forEach(function(item, index){
+                    /* item = {
+                            *    license: string
+                            *    file: string
+                            *    href: string
+                            *    start: string
+                            *    end: string
+                            *    code: string
+                            * }
+                    * */
+                    createCodeCard('#wrapper-result', {
+                        "license": item.license,
+                        "file": item.file,
+                        "href":item.href,
+                        "start": item.start,
+                        "end" : item.end,
+                        "code": item.code
+                    } , index + 1 ); // Index from list start from 0, so +1
+                });
+            }
+        }else{
+            //console.log("no response json object ");
+        }// End of code card generation
+    });
+</script>
+
 </body>
 </html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Siamese: Admin</title>
+    <!-- Metas -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/admin.css" type="text/css">
+    <link rel="stylesheet" href="/css/boxshadow.css" type="text/css">
+</head>
+<body>
+
+<div class="admin-form container mt-sm-4 mt-lg-5 mb-3 border-top loginContainerShadow rounded">
+    <!-- content here -->
+    <div class="text-center mb-4 border-bottom" >
+        <h1 class="h3 mb-1 font-weight-normal">
+            <img src="/images/logo.png" class="img rounded" alt="Siamese logo" width="48" height="48">
+            SiameseX
+        </h1>
+        <h3 class="h3 mb-3 font-weight-light">Administrators</h3>
+    </div>
+
+    <form method="post" role="form" th:action="@{/change-password}" th:object="${user}">
+        <!-- Message feedback will display here if any - placeholder for any feedback
+        <p class="alert alert-danger text-sm-font" th:if="${param.error}">
+            Your current password is incorrect.
+        </p>
+        <p class="alert alert-success text-sm-font" th:if="${param.success}">
+            Your password has been updated successfully.
+        </p>
+        -->
+
+        <div class="form-group" th:if="@{param.currentToken}">
+            <label for="currentToken1">Current Token</label>
+            <input aria-describedby="currentTokenHelp1" class="form-control" id="currentToken1" name="currentToken"
+                   type="text" th:value="@{param.currentToken}" required/>
+            <!-- <small id="currentTokenHelp1" class="form-text text-muted">Your email is in our safe hand</small> -->
+        </div><!-- .form-group -->
+
+        <div class="form-group">
+            <label for="newToken1">New Token</label>
+            <input aria-describedby="newTokenHelp1" class="form-control" id="newToken1" name="newToken"
+                   required type="text"/>
+            <!-- <small id="newTokenHelp1" class="form-text text-muted">Your email is in our safe hand</small> -->
+        </div><!-- .form-group -->
+
+        <input class="btn btn-primary mt-2 mb-2 slick-shadow" type="submit" value="Save"/>
+
+    </form>
+</div><!-- .admin-form -->
+
+<!-- Footer -->
+<footer class="page-footer font-small">
+
+
+    <!-- Go to Login form-->
+    <form th:action="@{/login}" method="get" role="form">
+        <h5 class="font-weight-light text-center alert alert-warning">
+            <span class="text-secondary"> </span>
+            <input class="btn btn-link text-center pt-0 pb-0" style="margin-bottom:4px" type="submit" value="Back" />
+        </h5>
+    </form>
+    <!-- Copyright -->
+    <div class="footer-copyright text-center py-3 text-muted" style="font-size: 0.7rem">
+        Copyright © Faculty of ICT, Mahidol University 2019
+    </div>
+
+</footer>
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<!-- Page's Javascript -->
+<script type="text/javascript">
+    // Using jQuery must be in this document ready function
+    // Bind all input in the form submit with enter keypress
+    // Solution from: https://stackoverflow.com/questions/477691/submitting-a-form-by-pressing-enter-without-a-submit-button
+    // Author: sanmai , Edited on Sep 19
+    $(function() {
+        $('form').each(function() {
+            $(this).find('input').keypress(function(e) {
+                // Enter pressed?
+                if(e.which == 10 || e.which == 13) {
+                    this.form.submit();
+                }
+            });
+
+            // In case, input's box must be hidden
+            // $(this).find('input[type=submit]').hide();
+        });
+    });
+</script>
+</body>
+</html>

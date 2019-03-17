@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Siamese: Register</title>
+    <!-- Metas -->
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/register.css" type="text/css">
+    <link rel="stylesheet" href="/css/boxshadow.css" type="text/css">
+</head>
+<body>
+    <div class="register-form container mt-sm-4 mt-lg-5 mb-3 border-top loginContainerShadow rounded">
+        <!-- content here -->
+        <div class="text-center mb-4" >
+            <!-- Header Text for the register form -->
+
+            <h1 class="h3 mb-3 font-weight-normal">
+                <img src="/images/logo.png" class="img" alt="Siamese logo rounded" width="48" height="48">
+                SiameseX
+            </h1>
+            <h3 class="h3 mb-3 font-weight-light">Create your new Account</h3>
+            <!-- Message feedback will display here if any -->
+            <p class="alert alert-warning text-sm-font" th:if="${message}">
+                <span th:utext="${message}"></span>
+            </p>
+        </div>
+
+        <!-- Register Form -->
+        <!-- novalidate boolean will prevent browser to display default feedback tooltips -->
+        <form th:action="@{/register}" th:object="${user}" method="post" role="form" class="needs-validation" novalidate>
+            <div class="form-group">
+                <label for="inputFirstName1">First Name</label>
+                <input id="inputFirstName1" type="text" name="firstName" placeholder="i.e John"
+                       class="form-control" aria-describedby="inputFirstNameHelp1"
+                       maxlength="30"
+                       pattern='^[a-zA-Z][\s\w^<>{}\"/|;:.,~!?@#$%^=&*\\]\\\\()\\[¿§«»ω⊙¤°℃℉€¥£¢¡®©0-9_+]{0,29}$' required />
+                <!-- <small id="inputFirstNameHelp1" class="form-text text-muted">Your email is in our safe hand</small> -->
+
+                <!-- validation Feedback Texts -->
+                <div class="valid-feedback">
+                    <!-- Empty feedback -->
+                </div>
+                <div class="invalid-feedback">
+                    Please insert a first name i.e John, Logan, ...
+                </div>
+            </div><!-- .form-group -->
+
+            <div class="form-group">
+                <label for="inputLastName1">Last Name</label>
+                <input id="inputLastName1" type="text" name="lastName" placeholder="i.e Smith"
+                       class="form-control" aria-describedby="inputLastNameHelp1"
+                       maxlength="30"
+                       pattern='^[a-zA-Z][\s\w^<>{}\"/|;:.,~!?@#$%^=&*\\]\\\\()\\[¿§«»ω⊙¤°℃℉€¥£¢¡®©0-9_+]{0,29}$' required />
+                <!-- <small id="inputLastNameHelp1" class="form-text text-muted">Your email is in our safe hand</small> -->
+
+                <!-- validation Feedback Texts -->
+                <div class="valid-feedback">
+                    <!-- Empty feedback -->
+                </div>
+                <div class="invalid-feedback">
+                    Please insert a last name i.e Smith, LumberShield, ...
+                </div>
+            </div><!-- .form-group -->
+
+            <div class="form-group">
+                <label for="inputEmail1">Email Address</label>
+                <input id="inputEmail1" type="email" name="email" placeholder="name@example.com"
+                       class="form-control" aria-describedby="inputEmailHelp1" maxlength="60" required />
+                <!-- <small id="inputEmailHelp1" class="form-text text-muted">Your email is in our safe hand</small> -->
+                <!-- validation Feedback Texts -->
+                <div class="valid-feedback">
+                    <!-- Empty feedback -->
+                </div>
+                <div class="invalid-feedback">
+                    Please insert a correct email format i.e name@example.com
+                </div>
+            </div><!-- .form-group -->
+
+            <div class="form-group ">
+                <label for="inputPassword1">Password</label>
+                <input id="inputPassword1" type="password" name="password" placeholder=""
+                       class="form-control" aria-describedby="inputPasswordHelp1"
+                       pattern='^[a-zA-Z][\w^<>{}\"/|;:.,~!?@#$%^=&*\\]\\\\()\\[¿§«»ω⊙¤°℃℉€¥£¢¡®©0-9_+]{3,19}$' required />
+                <!-- <small id="inputPasswordHelp1" class="form-text text-muted">Your email is in our safe hand</small> -->
+                <!-- validation Feedback Texts -->
+                <div class="valid-feedback">
+                    <!-- Empty feedback -->
+                </div>
+                <div class="invalid-feedback">
+                    The password's first character must be a letter, it must contain at least 4 characters
+                    and no more than 20 characters
+                    and no characters other than letters, numbers and the underscore may be used
+                </div> <!-- Original pattern author: Steven Smith from http://regexlib.com -->
+            </div><!-- .form-group -->
+
+
+            <input class="btn btn-lg btn-primary btn-block mt-5 mb-3 slick-shadow" type="submit" value="Register" />
+            <!-- Backup original code
+            <div><label> Username : <input type="text" name="name"/> </label></div>
+            <div><label> Email : <input type="text" name="email"/> </label></div>
+            <div><label> Password: <input type="password" name="password"/> </label></div>
+            <div><span th:utext="${message}"></span></div>
+            <div><input type="submit" value="Register"/></div>
+            -->
+        </form>
+
+    </div><!-- .register-form -->
+
+    <!-- Go to Login form-->
+    <form th:action="@{/login}" method="get" role="form">
+        <h5 class="font-weight-light text-center">
+            <span class="text-secondary">Already have an account? </span>
+            <input class="btn btn-link text-center pt-0 pb-0" style="margin-bottom:4px" type="submit" value="Login here" />
+        </h5>
+    </form>
+
+    <!-- Footer -->
+    <footer class="page-footer font-small">
+
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3 text-muted" style="font-size: 0.7rem">
+            Copyright © Faculty of ICT, Mahidol University 2019
+        </div>
+
+    </footer>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <!-- Page's Javascript -->
+    <script type="text/javascript">
+        // Using jQuery must be in this document ready function
+        $(function() {
+            // Disabling form submission if the validation return false
+            // Validation of property input called by .checkValidity()
+            // Basicly, use min, max for type=number, for text pattern="[A-Za-z]{3}" like this
+            // Pattern ref: https://www.w3schools.com/tags/att_input_pattern.asp
+            // https://www.w3schools.com/js/js_validation_api.asp
+            $('form.needs-validation').submit(function(event){
+                if(this.checkValidity() == false)
+                {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.classList.add('was-validated');
+                    console.log('Form is invalidated');
+                }else{
+                    console.log('Form is validated');
+                }
+            });
+
+            // Bind all input in the form submit with enter keypress
+            // Solution from: https://stackoverflow.com/questions/477691/submitting-a-form-by-pressing-enter-without-a-submit-button
+            // Author: sanmai , Edited on Sep 19
+            $('form').each(function() {
+                $(this).find('input').keypress(function(e) {
+                    // Enter pressed?
+                    if(e.which == 10 || e.which == 13) {
+                        this.form.submit();
+                    }
+                });
+
+                // In case, input's box must be hidden
+                // $(this).find('input[type=submit]').hide();
+            });
+        });
+    </script>
+</body>
+</html>
