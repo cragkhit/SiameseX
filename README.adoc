@@ -47,6 +47,17 @@ mysql> create user 'admin'@'%' identified by 'password';
 mysql> grant all on siamese.* to 'admin'@'%';
 ```
 
+Initializing application with mySQL server for the first time.
+
+Please update application.properties in this path:
+webapps/src/main/resources/application.properties
+
+set this value to 'create':
+spring.jpa.hibernate.ddl-auto=create
+
+For next time, to let application remember the registered members - set the value to 'update'
+spring.jpa.hibernate.ddl-auto=update
+
 == Troubleshooting
 
 * Console error while searching -> need to modify the location of elasticsearch in config.properties
