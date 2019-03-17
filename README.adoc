@@ -39,6 +39,13 @@ Viewing this page in a browser will display the form. You can submit a search qu
 6) Try to enter a code snippet in the search form and press search.
 
 == MySQL
+
+Note: On macOS, please use the command below to enter MySQL console:
+
+```bash
+/usr/local/mysql/bin/mysql -uroot -p
+```
+
 Please create the table and user below
 
 ```
