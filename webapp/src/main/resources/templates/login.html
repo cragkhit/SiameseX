@@ -8,8 +8,8 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="/css/login.css" type="text/css">
-    <link rel="stylesheet" href="/css/boxshadow.css" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/login.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/boxshadow.css}" type="text/css">
 </head>
 <body>
     <div class="signin-form container mt-sm-4 mt-lg-5 mb-3 border-top loginContainerShadow rounded">
@@ -17,7 +17,7 @@
         <!-- content here -->
         <div class="text-center mb-4" >
             <!-- Main logo -->
-            <img src="/images/logo.png" class="mb-4" alt="Siamese logo" width="72" height="72">
+            <img th:src="@{/images/logo.png}" class="mb-4" alt="Siamese logo" width="72" height="72">
             <h1 class="h3 mb-3 font-weight-light">Sign in to SiameseX</h1>
             <!-- Conditional Feedback messages here-->
             <p th:if="${param.error}" class="alert alert-danger text-sm-font">

@@ -14,12 +14,12 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
 
     <!-- Code Mirror : Code Editor CSS -->
-    <link rel="stylesheet" href="/lib/codemirror/lib/codemirror.css">
-    <link rel="stylesheet" href="/lib/codemirror/theme/neo.css"> <!-- Very light clean neat style-->
+    <link rel="stylesheet" th:href="@{/lib/codemirror/lib/codemirror.css}">
+    <link rel="stylesheet" th:href="@{/lib/codemirror/theme/neo.css}"> <!-- Very light clean neat style-->
 
     <!-- Search Page's CSS -->
-    <link rel="stylesheet" href="/css/search.css" type="text/css">
-    <link rel="stylesheet" href="/css/boxshadow.css" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/search.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/boxshadow.css}" type="text/css">
 </head>
 <body>
     <!-- expand-sm will make navigation bar only display a dropdown list (acquire a whole line in small resolution
@@ -32,7 +32,7 @@
 
         <!-- Text and Icons -->
         <a class="navbar-brand" href="#">
-            <img src="/images/logo.png" width="30" height="30" class="d-inline-block align-top rounded-circle" alt="">
+            <img th:src="@{/images/logo.png}" width="30" height="30" class="d-inline-block align-top rounded-circle" alt="">
             SiameseX
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -126,9 +126,9 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
     <!-- Code Mirror : Code Editor javascript -->
-    <script src="/lib/codemirror/lib/codemirror.js"></script>
-    <script src="/lib/codemirror/mode/javascript/javascript.js"></script>
-    <script src="/lib/codemirror/addon/selection/active-line.js"></script>
+    <script th:src="@{/lib/codemirror/lib/codemirror.js}"></script>
+    <script th:src="@{/lib/codemirror/mode/javascript/javascript.js}"></script>
+    <script th:src="@{/lib/codemirror/addon/selection/active-line.js}"></script>
 
     <!-- Page's Javascript -->
     <script>

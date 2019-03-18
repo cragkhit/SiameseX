@@ -107,13 +107,13 @@ public class Siamese {
     private IndexReader esIndexRader;
 
     public Siamese(String configFile) {
-        readFromConfigFile(configFile);
+        readFromConfigFile(configFile, true);
         printConfig();
         prepareTokenizers();
     }
 
     public Siamese(String configFile, String[] overridingParams) {
-        readFromConfigFile(configFile);
+        readFromConfigFile(configFile, true);
         // check the overriding command line parameters
         if (!overridingParams[0].equals("")) // input folder
             setInputFolder(overridingParams[0]);
@@ -125,7 +125,137 @@ public class Siamese {
         prepareTokenizers();
     }
 
-    private void readFromConfigFile(String configFile) {
+    // TODO: remove if the issue of reading config.properties is solved
+    private String getConfigStringHardCode()
+    {
+        return "##### GENERAL CONFIGURATIONS\n" +
+                "# location of elasticsearch\n" +
+                "elasticsearchLoc=./../elasticsearch-2.2.0-small\n" +
+                "# elasticsearch's server name (or IP)\n" +
+                "server=localhost\n" +
+                "# elasticsearch's cluster name. See cluster.name in your $elasticsearchLoc/config/elasticsearch.yml\n" +
+                "cluster=stackoverflow\n" +
+                "# index name\n" +
+                "index=cloplag\n" +
+                "# type name\n" +
+                "type=siamese\n" +
+                "# location of the input folder. This is the location of the files to be indexed (if command=index),\n" +
+                "# or the location of the queries (if command=search).\n" +
+                "inputFolder=/Users/Chaiyong/Documents/phd/2016/cloplag/tests_andrea\n" +
+                "# only for GitHub indexing, leave blank if not needed\n" +
+                "subInputFolder=\n" +
+                "# output folder to store the search results\n" +
+                "outputFolder=search_results\n" +
+                "# use DFS mode [default=no]\n" +
+                "dfs=true\n" +
+                "writeToFile=true\n" +
+                "# source code file extension\n" +
+                "extension=java\n" +
+                "# minimum clone size (lines)\n" +
+                "minCloneSize=6\n" +
+                "# command to execute [index,search]\n" +
+                "command=search\n" +
+                "# print out logging data\n" +
+                "isPrint=false\n" +
+                "# output format [csv = filename, csvfline = filename#start#end), gcf = general clone format]\n" +
+                "outputFormat=gcf\n" +
+                "# indexing mode [sequential, bulk]\n" +
+                "indexingMode=bulk\n" +
+                "# size of bulk insert\n" +
+                "bulkSize=4000\n" +
+                "##### SIMILARITY\n" +
+                "# compute similarity of the results [fuzzywuzzy, tokenratio, none]\n" +
+                "computeSimilarity=none\n" +
+                "# the similarity threshold for the four representations [T1,T2,T3,T4] respectively\n" +
+                "simThreshold=50%,60%,70%,80%\n" +
+                "# GitHub indexing? (automatically add URL)\n" +
+                "github=false\n" +
+                "# clone granularity [method, file]\n" +
+                "parseMode=method\n" +
+                "# print the progress of indexing/querying in every x files\n" +
+                "printEvery=10000\n" +
+                "# recreate the index if it exists [true, false]\n" +
+                "recreateIndexIfExists=true\n" +
+                "\n" +
+                "##### DELETE SETTINGS\n" +
+                "deleteField=\n" +
+                "deleteWildcard=\n" +
+                "deleteAmount=1000\n" +
+                "\n" +
+                "##### PARSER + TOKENIZER + NORMALIZER SETTINGS\n" +
+                "methodParser=crest.siamese.helpers.JavaMethodParser\n" +
+                "tokenizer=crest.siamese.helpers.JavaTokenizer\n" +
+                "normalizer=crest.siamese.helpers.JavaNormalizer\n" +
+                "\n" +
+                "##### MULTI-REPRESENTATION SETTINGS\n" +
+                "multirep=true\n" +
+                "enableRep=true,true,true,true\n" +
+                "# Code normalisation for T2 representation.\n" +
+                "# It can be a combination of x (none), w (words), d (datatypes),\n" +
+                "# j (Java classes), p (Java packages), k (keywords), v (values),\n" +
+                "# s (strings), o (operators), e (escape). For example: wkvs.\n" +
+                "# The default is djkopsvw.\n" +
+                "normMode=djkopsvw\n" +
+                "# turn on ngram\n" +
+                "isNgram=true\n" +
+                "# size of ngram.\n" +
+                "# representation T3\n" +
+                "ngramSize=11\n" +
+                "# representation T2\n" +
+                "t2NgramSize=16\n" +
+                "# representation T1\n" +
+                "t1NgramSize=4\n" +
+                "\n" +
+                "##### QUERY-RELATED SETTINGS\n" +
+                "# starting result offset (usually zero)\n" +
+                "resultOffset=0\n" +
+                "# the size of the results\n" +
+                "resultsSize=10\n" +
+                "# tfidf, bm25, dfr, ib, lmd (LM Dirichlet), lmj (LM Jelinek-Mercer)\n" +
+                "rankingFunction=tfidf\n" +
+                "# QUERY REDUCTION SETTINGS\n" +
+                "# turn on query reduction [true/false]\n" +
+                "queryReduction=true\n" +
+                "# reduction percentile for the T3 layer [0, 100]\n" +
+                "QRPercentileNorm=10\n" +
+                "# reduction percentile for the T2 layer [0, 100]\n" +
+                "QRPercentileT2=10\n" +
+                "# reduction percentile for the T1 layer [0, 100]\n" +
+                "QRPercentileT1=10\n" +
+                "# reduction percentile for the T1 layer [0, 100]\n" +
+                "QRPercentileOrig=10\n" +
+                "# boosting for T3 layer\n" +
+                "normBoost=11\n" +
+                "# boosting for T2 layer\n" +
+                "t2Boost=16\n" +
+                "# boosting for T1 layer\n" +
+                "t1Boost=4\n" +
+                "# boosting for T0 layer\n" +
+                "origBoost=1\n" +
+                "\n" +
+                "##### LICENSE EXTRACTION\n" +
+                "# extract license [true, false]\n" +
+                "license=false\n" +
+                "# license extractor [ninka, regexp]\n" +
+                "licenseExtractor=regexp\n" +
+                "\n" +
+                "##### EXPERIMENT CONFIGURATIONS\n" +
+                "# ONLY USED FOR THE EXPERIMENTS OF SIAMESE\n" +
+                "# elasticsearch similarity function + ngram + normalisation [or both]\n" +
+                "similarityMode=tfidf_text_both\n" +
+                "# prefix of the clone cluster file name [cloplag/soco]\n" +
+                "cloneClusterFile=soco\n" +
+                "# IR error measure [arp/map]\n" +
+                "errorMeasure=map\n" +
+                "# delete the index after every run?\n" +
+                "deleteIndexAfterUse=true\n" +
+                "\n" +
+                "##### DEPRECATED\n" +
+                "# (DEPRECATED) no. of total documents in the index\n" +
+                "totalDocuments=100\n";
+    }
+
+    private void readFromConfigFile(String configFile, boolean isUseHardcodeConfig) {
 	    /* copied from
 	    https://www.mkyong.com/java/java-properties-file-examples/
 	     */
@@ -133,9 +263,17 @@ public class Siamese {
         InputStream input = null;
 
         try {
-            input = new FileInputStream(configFile);
-            // load a properties file
-            prop.load(input);
+            if(isUseHardcodeConfig)
+            {
+                // create a new reader instead
+                StringReader reader = new StringReader(getConfigStringHardCode());
+                // load a properties file
+                prop.load(reader);
+            }else{
+                input = new FileInputStream(configFile);
+                // load a properties file
+                prop.load(input);
+            }
 
             // get the property value and print it out
             server = prop.getProperty("server");

@@ -7,8 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/register.css" type="text/css">
-    <link rel="stylesheet" href="/css/boxshadow.css" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/register.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/boxshadow.css}" type="text/css">
 </head>
 <body>
     <div class="register-form container mt-sm-4 mt-lg-5 mb-3 border-top loginContainerShadow rounded">
@@ -17,7 +17,7 @@
             <!-- Header Text for the register form -->
 
             <h1 class="h3 mb-3 font-weight-normal">
-                <img src="/images/logo.png" class="img" alt="Siamese logo rounded" width="48" height="48">
+                <img th:src="@{/images/logo.png}" class="img" alt="Siamese logo rounded" width="48" height="48">
                 SiameseX
             </h1>
             <h3 class="h3 mb-3 font-weight-light">Create your new Account</h3>
