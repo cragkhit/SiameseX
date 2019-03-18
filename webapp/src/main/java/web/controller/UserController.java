@@ -9,7 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import web.model.User;
 import web.service.EmailService;
@@ -35,11 +34,6 @@ public class UserController {
         this.emailService = emailService;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @GetMapping("/all")
-    public @ResponseBody Iterable<User> getAllUsers() {
-        return userService.findAll();
     }
 
     @GetMapping(value = {"/", "/login"})
