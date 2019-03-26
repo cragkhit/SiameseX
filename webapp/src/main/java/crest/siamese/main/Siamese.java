@@ -136,7 +136,7 @@ public class Siamese {
                 "# elasticsearch's cluster name. See cluster.name in your $elasticsearchLoc/config/elasticsearch.yml\n" +
                 "cluster=stackoverflow\n" +
                 "# index name\n" +
-                "index=cloplag\n" +
+                "index=stackoverflow\n" +
                 "# type name\n" +
                 "type=siamese\n" +
                 "# location of the input folder. This is the location of the files to be indexed (if command=index),\n" +
@@ -1076,19 +1076,9 @@ public class Siamese {
 
         String output = "";
         /* put query at the front */
-        JSONFormatter jsonFormatter = new JSONFormatter();
+        JSONFormatter jsonFormatter = new JSONFormatter(inputFolder);
         jsonFormatter.addCloneClass(1, -1, results);
         output = jsonFormatter.getJSONString();
-
-//        output += "<ol>";
-//        for (Document r: results) {
-//            String[] fileName = r.getFile().split(".java_");
-//            output += "<li><b>File:</b>&nbsp;" + fileName[0] + ".java&nbsp;" +
-//                    "<b>Method:</b>&nbsp;" +
-//                    fileName[1] + "&nbsp;<b>Line:</b>&nbsp;" +
-//                    r.getStartLine() + "&nbsp;to&nbsp;" + r.getEndLine() + "</li>";
-//        }
-//        output += "</ol>";
 
         return output;
     }
