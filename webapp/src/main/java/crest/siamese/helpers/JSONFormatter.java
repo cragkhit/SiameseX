@@ -9,10 +9,17 @@ import java.util.ArrayList;
 public class JSONFormatter {
     JSONObject jobj;
     JSONArray jclones;
+    String inputFolder;
 
     public JSONFormatter() {
         jobj = new JSONObject();
         jclones = new JSONArray();
+    }
+
+    public JSONFormatter(String inputFolder) {
+        jobj = new JSONObject();
+        jclones = new JSONArray();
+        this.inputFolder = inputFolder;
     }
 
     public void addCloneClass(int id, int sim, ArrayList<Document> results) {
@@ -26,10 +33,12 @@ public class JSONFormatter {
     private JSONObject createClone(crest.siamese.document.Document d) {
         String file = d.getFile().split(".java_")[0] + ".java";
         JSONObject item = new JSONObject();
-        item.put("file", file);
+        System.out.println(this.inputFolder + ": " + file);
+        item.put("file", file.replace(this.inputFolder, ""));
         item.put("start", String.valueOf(d.getStartLine()));
         item.put("end", String.valueOf(d.getEndLine()));
         item.put("license", d.getLicense());
+        item.put("code", d.getOriginalSource());
         return item;
     }
 
