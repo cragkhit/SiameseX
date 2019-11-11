@@ -20,6 +20,7 @@
     <!-- Search Page's CSS -->
     <link rel="stylesheet" th:href="@{/css/search.css}" type="text/css">
     <link rel="stylesheet" th:href="@{/css/boxshadow.css}" type="text/css">
+
 </head>
 <body>
     <!-- expand-sm will make navigation bar only display a dropdown list (acquire a whole line in small resolution
@@ -29,7 +30,6 @@
         <!-- Toggler will show in small screen resolution, in this case, it will be on the left while brand word on the right
             data-target must be an id of collapsible area of navigation bar div or element
         -->
-
         <!-- Text and Icons -->
         <a class="navbar-brand" href="#">
             <img th:src="@{/images/logo.png}" width="30" height="30" class="d-inline-block align-top rounded-circle" alt="">
@@ -46,28 +46,8 @@
                 <li class="nav-item">
                     <!-- Go to Search subpage -->
                     <form th:action="@{/search}" method="get" class="form-inline">
-                        <input type="submit" value="Admin" class="btn btn-link btn-block nav-link disabled " />
-                    </form>
-                </li>
-                <li class="nav-item">
-                    <!-- Go to Search subpage -->
-                    <form th:action="@{/search}" method="get" class="form-inline">
                         <input type="submit" value="Search" class="btn btn-link btn-block nav-link active" />
                     </form>
-                </li>
-                <li class="nav-item">
-                    <!-- Go to Profile subpage -->
-                    <form th:action="@{/profile}" method="get" class="form-inline">
-                        <input type="submit" value="Profile" class="btn btn-link btn-block nav-link" />
-                    </form>
-                    <!-- <a class="nav-link" href="#">Profile</a> -->
-                </li>
-                <li class="nav-item">
-                    <!-- Go to Logout module -->
-                    <form th:action="@{/logout}" method="post" class="form-inline">
-                        <input type="submit" value="Sign Out" class="btn btn-link btn-block nav-link"/>
-                    </form>
-                    <!-- <a class="nav-link" href="#">Sign out</a> -->
                 </li>
             </ul>
         </div>
@@ -104,8 +84,6 @@
             <input class="btn btn-lg btn-primary btn-block mb-3" type="submit" value="Submit Query" />
 
         </form>
-
-
 
     </div><!-- .search-form -->
 
@@ -173,10 +151,10 @@
                 const value = editor.getValue();
                 $('#search-query-editor1').text(value);
                 // Check whether original text area has been updated
-                // $('#search-query-editor1').css({"display":"block"});
                 // console.log(value);
                 if(value.length != 0) {
-                    // Unregister this function then trigger normal default submit action
+                    // Unregister this function first (we move value back to text area from plug-in)
+                    // then trigger normal default submit action
                     $("#query-form1").unbind("submit").submit();
                 }else{
                     $("#validation-check").addClass("alert alert-danger");
@@ -206,7 +184,4 @@
 
         });
     </script>
-
-
 </body>
-</html>

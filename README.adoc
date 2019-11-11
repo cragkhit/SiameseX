@@ -1,10 +1,11 @@
 # SiameseX
 
+Standalone version is for debug and feature test with Siamese JAVA application hosted on spring
 == What you'll build
  
 In this guide, you will build a web form of Siamese which will be accessible at the following URL:
 
-    http://localhost:8080/login
+    http://localhost:8080/search
 
 Viewing this page in a browser will display the form. You can submit a search query by putting a code snippet to search for clones in the form. A results page will be displayed when the form is submitted.
 
@@ -33,41 +34,27 @@ Viewing this page in a browser will display the form. You can submit a search qu
 ```bash
 ./mvnw spring-boot:run
 ```
+Please note that click 'Play' button in IntelliJ can open the spring-boot project and display page + rest controller correctly
+However, It won't work correctly with the elastic search. To make it work with elastic search you have to trigger mvnw spring-boot:run
+manually or make a short-cut in the terminal - and the query with elastic-search will get you the result 
 
-5) Wait until the compilation is completed, then open a web browser and go to: http://localhost:8080/greeting.
+5) Wait until the compilation is completed, then open a web browser and go to: http://localhost:8080/search.
 
 6) Try to enter a code snippet in the search form and press search.
 
-== MySQL
-Please create the table and user below
+7.) Webservice can be request by : http://localhost:8080/api/searchJSON
+send the POST request with header application/json
+the content must be in JSON as {"ID":<put a long value here>,"content":"<Put your string search source code here>"}
 
-```
-mysql> CREATE DATABASE siamese;
-mysql> create user 'admin'@'%' identified by 'password';
-mysql> grant all on siamese.* to 'admin'@'%';
-```
-
-Initializing application with mySQL server for the first time.
-
-Please update application.properties in this path:
-```
-webapps/src/main/resources/application.properties
-```
-
-set this value to 'create':
-```
-spring.jpa.hibernate.ddl-auto=create
-```
-
-For next time, to let application remember the registered members - set the value to 'update'
-```
-spring.jpa.hibernate.ddl-auto=update
-```
+The response will be in the format of
+{"clones":[[]]}
+please note that this response did double bracket and it is due to logical bug in the Siamese App not Spring boot
 
 == Troubleshooting
 
 * Console error while searching -> need to modify the location of elasticsearch in config.properties
+currently the config.properties can't be loaded if deployed on cloud, so the hardcode has been assigned into Siamese Main()
 ```
-# location of elasticsearch
+# location of elasticsearch that's a requirement can be changed 
 elasticsearchLoc=./../elasticsearch-2.2.0-small
 ```

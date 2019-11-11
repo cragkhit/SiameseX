@@ -30,7 +30,7 @@
 
         .btn-no-text-decoration{
             text-decoration: none!important;
-       }
+        }
 
         .btn-wrap-text {
             white-space: normal !important;
@@ -66,32 +66,12 @@
             <li class="nav-item">
                 <!-- Go to Search subpage -->
                 <form th:action="@{/search}" method="get" class="form-inline">
-                    <input type="submit" value="Admin" class="btn btn-link btn-block nav-link disabled " />
-                </form>
-            </li>
-            <li class="nav-item">
-                <!-- Go to Search subpage -->
-                <form th:action="@{/search}" method="get" class="form-inline">
                     <input type="submit" value="Search" class="btn btn-link btn-block nav-link" />
                 </form>
             </li>
             <li class="nav-item">
                 <!-- Notify result subpage -->
                 <button class="btn btn-link btn-block nav-link active text-success" role="button">Result</button>
-            </li>
-            <li class="nav-item">
-                <!-- Go to Profile subpage -->
-                <form th:action="@{/profile}" method="get" class="form-inline">
-                    <input type="submit" value="Profile" class="btn btn-link btn-block nav-link" />
-                </form>
-                <!-- <a class="nav-link" href="#">Profile</a> -->
-            </li>
-            <li class="nav-item">
-                <!-- Go to Logout module -->
-                <form th:action="@{/logout}" method="post" class="form-inline">
-                    <input type="submit" value="Sign Out" class="btn btn-link btn-block nav-link"/>
-                </form>
-                <!-- <a class="nav-link" href="#">Sign out</a> -->
             </li>
         </ul>
     </div>
@@ -115,8 +95,6 @@
         <button id="collapse-toggle-btn" class="btn btn-link text-danger btn-sm  btn-no-text-decoration">Collapse</button>
     </p>
     <p th:unless="${search.result}" class="lead border-bottom pb-1">No result found</p>
-    <!--<p th:text="'id: ' + ${search.id}" /-->
-
 
     <div id="wrapper-result" class="bg-light">
     </div>
