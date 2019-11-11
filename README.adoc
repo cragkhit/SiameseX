@@ -23,6 +23,9 @@ Viewing this page in a browser will display the form. You can submit a search qu
 
 2) Extract elasticsearch-2.2.0-small.zip.
 
+   You are freely to set it on any location in the machine but be sure to read troubleshooting
+   The current setup is relative-path mapping so that the folder elastic-search is on the save level with webapp folder
+
 3) Open a new terminal, nativate to the extracted elasticsearch folder, and run elasticsearch.
 
 ```bash
